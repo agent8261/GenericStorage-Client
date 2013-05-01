@@ -40,6 +40,7 @@ public class GenericStorageApi
 
   public void startLoginActivity()
   {
+    Utils.printMethodName();
     Intent i = new Intent();
     i.setComponent(GenericContract.COMPONENT_LOGIN_ACTIVITY);
     if( !(mContext instanceof Activity) )
@@ -53,6 +54,7 @@ public class GenericStorageApi
   
   public void loginChooseAccount()
   {
+    Utils.printMethodName();
     Intent i = new Intent();
     i.setComponent(GenericContract.COMPONENT_LOGIN_ACTIVITY);
     i.putExtra(GenericContract.KEY_CHOOSE_ACCOUNT, true);
@@ -67,6 +69,7 @@ public class GenericStorageApi
 
   public void requestSync()
   {
+    Utils.printMethodName();
     Account account = new Account(getCurrentAccount(), "com.google");
     ContentResolver.requestSync(account, GenericContract.AUTHORITY,
         new Bundle());
@@ -76,6 +79,7 @@ public class GenericStorageApi
 
   public String getCurrentAccount()
   {
+    Utils.printMethodName();
     Cursor c = mContext.getContentResolver().query(
         GenericContract.URI_CURRENT_ACCOUNT, null, null, null, null);
     String res = "";

@@ -59,8 +59,7 @@ public class MainActivity extends ListActivity implements
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
-  {
-    
+  {    
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
     return true;
@@ -127,7 +126,12 @@ public class MainActivity extends ListActivity implements
     AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
     aBuilder.setMessage(accountName).setTitle("Account Name").show();
   }
-
+  
+  public void exit(MenuItem item)
+  {
+    finish();
+  }
+  
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
