@@ -112,7 +112,8 @@ public class MainActivity extends ListActivity implements
   public void login(MenuItem item)
   {
     Utils.printMethodName();
-    api().startLoginActivity();
+    //api().startLoginActivity();
+    api().loginChooseAccount();
   }
 
   public void displayAccount(MenuItem item)

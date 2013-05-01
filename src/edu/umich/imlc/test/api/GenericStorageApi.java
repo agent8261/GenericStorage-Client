@@ -50,6 +50,20 @@ public class GenericStorageApi
   }
 
   // ---------------------------------------------------------------------------
+  
+  public void loginChooseAccount()
+  {
+    Intent i = new Intent();
+    i.setComponent(GenericContract.COMPONENT_LOGIN_ACTIVITY);
+    i.putExtra(GenericContract.KEY_CHOOSE_ACCOUNT, true);
+    if( !(mContext instanceof Activity) )
+    {
+      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    }
+    mContext.startActivity(i);    
+  }
+  
+  // ---------------------------------------------------------------------------
 
   public void requestSync()
   {
