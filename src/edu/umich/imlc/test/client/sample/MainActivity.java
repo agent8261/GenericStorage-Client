@@ -39,17 +39,17 @@ public class MainActivity extends ListActivity implements
   static final String SAMPLE_TYPE = "sample";
   GenericStorageApi api;
   Random rand = new Random();
-  public static final String[] mFromColumns = { MetaDataColumns.NAME, MetaDataColumns.URI };
+  public static final String[] mFromColumns = { MetaDataColumns.NAME, MetaDataColumns.SEQUENCE };
   public static final int[] mToFields = { android.R.id.text1, android.R.id.text2 };
   public static final String[] loaderProjection = { MetaDataColumns.ID, MetaDataColumns.NAME,
-      MetaDataColumns.URI };
+      MetaDataColumns.SEQUENCE };
   SimpleCursorAdapter mAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     mAdapter = new SimpleCursorAdapter(this,
         android.R.layout.two_line_list_item, null, mFromColumns, mToFields, 0);
     getLoaderManager().initLoader(GENERIC_LOADER, null, this);
@@ -67,7 +67,7 @@ public class MainActivity extends ListActivity implements
 
   public void createFile(MenuItem item)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     Log.v(TAG, "go");
     String fileName = "blah" + Math.abs(rand.nextInt()) + ".sample";
 
@@ -104,20 +104,20 @@ public class MainActivity extends ListActivity implements
 
   public void doSync(MenuItem item)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     api().requestSync();
   }
 
   public void login(MenuItem item)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     //api().startLoginActivity();
     api().loginChooseAccount();
   }
 
   public void displayAccount(MenuItem item)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     String accountName = api().getCurrentAccount();
     if( accountName.isEmpty() )
     {
@@ -135,7 +135,7 @@ public class MainActivity extends ListActivity implements
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     switch ( id )
     {
       case GENERIC_LOADER:
@@ -152,14 +152,14 @@ public class MainActivity extends ListActivity implements
   @Override
   public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     mAdapter.changeCursor(cursor);
   }
 
 
   public void openAndPrint(MetaData metaData)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     try
     {
       InputStream is = api().loadFile(metaData.fileId());
@@ -176,7 +176,7 @@ public class MainActivity extends ListActivity implements
           newLine = "\n";
         }
         AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
-        aBuilder.setMessage(result.toString()).show();
+        aBuilder.setMessage(result.toString()+metaData).show();
       }
       finally
       {
@@ -199,7 +199,7 @@ public class MainActivity extends ListActivity implements
 
   public void updateFile(MetaData fileMetaData)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     File blahFile = null;
     try
     {
@@ -221,7 +221,7 @@ public class MainActivity extends ListActivity implements
   public File createLocalFile(String fileName, String content)
       throws IOException
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     File externalDir = getExternalCacheDir();
     File blahFile = new File(externalDir, "blah");
     if( blahFile.exists() )
@@ -246,14 +246,14 @@ public class MainActivity extends ListActivity implements
   @Override
   public void onLoaderReset(Loader<Cursor> arg0)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     mAdapter.changeCursor(null);
   }
 
   @Override
   protected void onListItemClick(ListView l, View v, int position, long id)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     MetaData fileMetaData = api().getMetaData(id);
     openAndPrint(fileMetaData);
     updateFile(fileMetaData);

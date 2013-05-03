@@ -32,7 +32,7 @@ public class GenericStorageApi
 
   public GenericStorageApi(Context c_)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     mContext = c_;
   }
 
@@ -40,7 +40,7 @@ public class GenericStorageApi
 
   public void startLoginActivity()
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     Intent i = new Intent();
     i.setComponent(GenericContract.COMPONENT_LOGIN_ACTIVITY);
     if( !(mContext instanceof Activity) )
@@ -54,7 +54,7 @@ public class GenericStorageApi
   
   public void loginChooseAccount()
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     Intent i = new Intent();
     i.setComponent(GenericContract.COMPONENT_LOGIN_ACTIVITY);
     i.putExtra(GenericContract.KEY_CHOOSE_ACCOUNT, true);
@@ -69,7 +69,7 @@ public class GenericStorageApi
 
   public void requestSync()
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     Account account = new Account(getCurrentAccount(), "com.google");
     ContentResolver.requestSync(account, GenericContract.AUTHORITY,
         new Bundle());
@@ -79,7 +79,7 @@ public class GenericStorageApi
 
   public String getCurrentAccount()
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     Cursor c = mContext.getContentResolver().query(
         GenericContract.URI_CURRENT_ACCOUNT, null, null, null, null);
     String res = "";
@@ -96,7 +96,7 @@ public class GenericStorageApi
   public InputStream loadFile(String id) throws FileNotFoundException,
       MyDeskException
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     try
     {
       if( id.isEmpty() )
@@ -120,7 +120,7 @@ public class GenericStorageApi
   public MetaData createNewFile(String name, String type, File newFile)
       throws MyDeskException
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     try
     {
       if( name.isEmpty() )
@@ -135,7 +135,6 @@ public class GenericStorageApi
       ContentValues values = new ContentValues();
       values.put(MetaDataColumns.NAME, name);
       values.put(MetaDataColumns.TYPE, type);
-      values.put(GenericContract.KEY_UPDATE_BACKEND, false);
       values
           .put(GenericContract.KEY_NEW_FILE, Uri.fromFile(newFile).toString());
       String newId = mContext.getContentResolver()
@@ -163,7 +162,7 @@ public class GenericStorageApi
    */
   public void saveFile(File file) throws MyDeskException
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     if( !file.exists() )
     {
       throw new IllegalArgumentException();
@@ -174,7 +173,6 @@ public class GenericStorageApi
     values.put(GenericContract.KEY_NEW_FILE, fileUri.toString());
     values.put(GenericContract.KEY_UPDATE_OLD_SEQUENCE,
         currentFile.sequenceNumber());
-    values.put(GenericContract.KEY_UPDATE_BACKEND, false);
     try
     {
       mContext.getContentResolver()
@@ -195,7 +193,7 @@ public class GenericStorageApi
 
   public MetaData getMetaData(String fileId) throws MyDeskException
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     if( fileId.isEmpty() )
     {
       throw new IllegalArgumentException();
@@ -222,7 +220,7 @@ public class GenericStorageApi
 
   public MetaData getMetaData(long localId)
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     String[] selectionIn = { String.valueOf(localId) };
     Cursor c = mContext.getContentResolver().query(GenericContract.URI_FILES,
         MetaDataProjections.METADATA, MetaDataColumns.ID + "=?", selectionIn,
@@ -251,7 +249,7 @@ public class GenericStorageApi
   private void throwMyDeskExceptionIfAvailable(IllegalStateException ise)
       throws MyDeskException
   {
-    Utils.printMethodName();
+    Utils.printMethodName(TAG);
     MyDeskException e = null;
     try
     {
