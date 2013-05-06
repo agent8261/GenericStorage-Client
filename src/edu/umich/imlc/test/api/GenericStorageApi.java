@@ -71,8 +71,11 @@ public class GenericStorageApi
   {
     Utils.printMethodName(TAG);
     Account account = new Account(getCurrentAccount(), "com.google");
+    
+    Bundle extras = new Bundle();
+    extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
     ContentResolver.requestSync(account, GenericContract.AUTHORITY,
-        new Bundle());
+        extras);
   }
 
   // ---------------------------------------------------------------------------
