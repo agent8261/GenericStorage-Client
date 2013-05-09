@@ -3,6 +3,7 @@ package edu.umich.imlc.test.api;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 
 import edu.umich.imlc.mydesk.test.common.GenericContract;
 import edu.umich.imlc.mydesk.test.common.GenericContract.MetaDataColumns;
@@ -17,9 +18,11 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SyncInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 public class GenericStorageApi
 {
@@ -51,7 +54,7 @@ public class GenericStorageApi
   }
 
   // ---------------------------------------------------------------------------
-  
+
   public void loginChooseAccount()
   {
     Utils.printMethodName(TAG);
@@ -62,22 +65,57 @@ public class GenericStorageApi
     {
       i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
-    mContext.startActivity(i);    
+    mContext.startActivity(i);
   }
-  
+
   // ---------------------------------------------------------------------------
 
   public void requestSync()
   {
     Utils.printMethodName(TAG);
     Account account = new Account(getCurrentAccount(), "com.google");
-    
+
     Bundle extras = new Bundle();
     extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-    ContentResolver.requestSync(account, GenericContract.AUTHORITY,
-        extras);
+    ContentResolver.requestSync(account, GenericContract.AUTHORITY, extras);
+    logSyncStatus(account);
   }
 
+  private boolean isSyncActive(Account account)
+  {
+    for( SyncInfo si : ContentResolver.getCurrentSyncs() )
+    {
+      if( si.account.equals(account)
+          && si.authority.equals(GenericContract.AUTHORITY) )
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public void logSyncStatus(Account account)
+  {
+    Utils.printMethodName(TAG);
+    Log.d(TAG, "isSyncActive: " + isSyncActive(account));
+    Log.d(
+        TAG,
+        "isSyncActive2: "
+            + ContentResolver.isSyncActive(account, GenericContract.AUTHORITY));
+    Log.d(
+        TAG,
+        "isSyncPending: "
+            + ContentResolver.isSyncPending(account, GenericContract.AUTHORITY));
+  }
+
+  public void cancelSync()
+  {
+    Utils.printMethodName(TAG);
+    
+    Account account = new Account(getCurrentAccount(), "com.google");
+    ContentResolver.cancelSync(account, GenericContract.AUTHORITY);
+    logSyncStatus(account);
+  }
   // ---------------------------------------------------------------------------
 
   public String getCurrentAccount()

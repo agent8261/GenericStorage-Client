@@ -108,6 +108,11 @@ public class MainActivity extends ListActivity implements
     api().requestSync();
   }
 
+  public void cancelSync(MenuItem item)
+  {
+    Utils.printMethodName(TAG);
+    api().cancelSync();
+  }
   public void login(MenuItem item)
   {
     Utils.printMethodName(TAG);

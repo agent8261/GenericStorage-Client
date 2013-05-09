@@ -8,5 +8,6 @@
     <string name="action_login">Login</string>
     <string name="action_display_account">Show Account</string>
     <string name="action_sync">Request Sync</string>
+    <string name="action_cancelSync">Cancel Sync</string>
 
 </resources>
