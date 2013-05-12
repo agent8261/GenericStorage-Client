@@ -3,9 +3,8 @@ package edu.umich.imlc.test.api;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.List;
-
 import edu.umich.imlc.mydesk.test.common.GenericContract;
+import edu.umich.imlc.mydesk.test.common.GenericContract.GenericURIs;
 import edu.umich.imlc.mydesk.test.common.GenericContract.MetaDataColumns;
 import edu.umich.imlc.mydesk.test.common.Utils;
 import edu.umich.imlc.mydesk.test.common.GenericContract.Exceptions;
@@ -83,15 +82,19 @@ public class GenericStorageApi
 
   private boolean isSyncActive(Account account)
   {
+    Utils.printMethodName(TAG);
+    boolean isactive = false;
     for( SyncInfo si : ContentResolver.getCurrentSyncs() )
     {
+      Log.d(TAG, "SyncInfo: (" + si.account.name + ", " + si.account.type
+          + "), " + si.authority);
       if( si.account.equals(account)
           && si.authority.equals(GenericContract.AUTHORITY) )
       {
-        return true;
+        isactive = true;
       }
     }
-    return false;
+    return isactive;
   }
 
   public void logSyncStatus(Account account)
@@ -106,23 +109,34 @@ public class GenericStorageApi
         TAG,
         "isSyncPending: "
             + ContentResolver.isSyncPending(account, GenericContract.AUTHORITY));
+    Log.d(
+        TAG,
+        "isSyncable: "
+            + ContentResolver.getIsSyncable(account, GenericContract.AUTHORITY));
+    Log.d(
+        TAG,
+        "syncAutomatically: "
+            + ContentResolver.getSyncAutomatically(account,
+                GenericContract.AUTHORITY));
   }
 
   public void cancelSync()
   {
     Utils.printMethodName(TAG);
-    
+
     Account account = new Account(getCurrentAccount(), "com.google");
-    ContentResolver.cancelSync(account, GenericContract.AUTHORITY);
+    ContentResolver.cancelSync(account, null);
+    ContentResolver.cancelSync(null, GenericContract.AUTHORITY);
     logSyncStatus(account);
   }
+
   // ---------------------------------------------------------------------------
 
   public String getCurrentAccount()
   {
     Utils.printMethodName(TAG);
     Cursor c = mContext.getContentResolver().query(
-        GenericContract.URI_CURRENT_ACCOUNT, null, null, null, null);
+        GenericURIs.URI_CURRENT_ACCOUNT, null, null, null, null);
     String res = "";
     if( c.moveToFirst() )
     {
@@ -145,7 +159,7 @@ public class GenericStorageApi
         throw new IllegalArgumentException();
       }
 
-      Uri uri = Uri.withAppendedPath(GenericContract.URI_FILES, id);
+      Uri uri = Uri.withAppendedPath(GenericURIs.URI_FILES, id);
       currentFile = getMetaData(id);
       return mContext.getContentResolver().openInputStream(uri);
     }
@@ -179,7 +193,7 @@ public class GenericStorageApi
       values
           .put(GenericContract.KEY_NEW_FILE, Uri.fromFile(newFile).toString());
       String newId = mContext.getContentResolver()
-          .insert(GenericContract.URI_FILES, values).getLastPathSegment();
+          .insert(GenericURIs.URI_FILES, values).getLastPathSegment();
       currentFile = getMetaData(newId);
       return currentFile;
     }
@@ -218,7 +232,7 @@ public class GenericStorageApi
     {
       mContext.getContentResolver()
           .update(
-              Uri.withAppendedPath(GenericContract.URI_FILES,
+              Uri.withAppendedPath(GenericURIs.URI_FILES,
                   currentFile.fileId()), values, null, null);
 
       // refresh our current file metadata
@@ -242,7 +256,7 @@ public class GenericStorageApi
 
     String[] whereArgs = { fileId };
     Cursor c = mContext.getContentResolver().query(
-        Uri.withAppendedPath(GenericContract.URI_FILES, fileId),
+        Uri.withAppendedPath(GenericURIs.URI_FILES, fileId),
         MetaDataProjections.METADATA, MetaDataColumns.FILE_ID + "=?",
         whereArgs, null);
     try
@@ -263,7 +277,7 @@ public class GenericStorageApi
   {
     Utils.printMethodName(TAG);
     String[] selectionIn = { String.valueOf(localId) };
-    Cursor c = mContext.getContentResolver().query(GenericContract.URI_FILES,
+    Cursor c = mContext.getContentResolver().query(GenericURIs.URI_FILES,
         MetaDataProjections.METADATA, MetaDataColumns.ID + "=?", selectionIn,
         null);
     try

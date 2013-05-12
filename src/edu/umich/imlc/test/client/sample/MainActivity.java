@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Random;
 
-import edu.umich.imlc.mydesk.test.common.GenericContract;
+import edu.umich.imlc.mydesk.test.common.GenericContract.GenericURIs;
 import edu.umich.imlc.mydesk.test.common.Utils;
 import edu.umich.imlc.mydesk.test.common.GenericContract.MetaData;
 import edu.umich.imlc.mydesk.test.common.GenericContract.MetaDataColumns;
@@ -18,6 +18,7 @@ import edu.umich.imlc.mydesk.test.common.exceptions.MyDeskException;
 import edu.umich.imlc.test.api.GenericStorageApi;
 import edu.umich.imlc.test.client.R;
 import android.os.Bundle;
+import android.accounts.Account;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -113,6 +114,13 @@ public class MainActivity extends ListActivity implements
     Utils.printMethodName(TAG);
     api().cancelSync();
   }
+  
+  public void logSyncStatus(MenuItem item)
+  {
+    Utils.printMethodName(TAG);
+    api().logSyncStatus(new Account(api().getCurrentAccount(), "com.google"));
+  }
+  
   public void login(MenuItem item)
   {
     Utils.printMethodName(TAG);
@@ -145,7 +153,7 @@ public class MainActivity extends ListActivity implements
     {
       case GENERIC_LOADER:
         CursorLoader loader = new CursorLoader(this);
-        loader.setUri(GenericContract.URI_FILES);
+        loader.setUri(GenericURIs.URI_FILES);
 
         loader.setProjection(loaderProjection);
         return loader;

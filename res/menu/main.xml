@@ -10,5 +10,6 @@
     <item android:id="@+id/action_display_account" android:showAsAction="never" android:onClick="displayAccount" android:orderInCategory="120" android:title="@string/action_display_account"></item>
     <item android:id="@+id/action_sync" android:onClick="doSync" android:title="@string/action_sync"></item>
     <item android:id="@+id/action_cancelSync" android:onClick="cancelSync" android:title="@string/action_cancelSync"></item>
+    <item android:id="@+id/action_logSync" android:onClick="logSyncStatus" android:title="@string/action_logSyncSettings"></item>
 
 </menu>

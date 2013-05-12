@@ -24,8 +24,10 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
+        public static final int action_cancelSync=0x7f080004;
         public static final int action_createFile=0x7f080000;
         public static final int action_display_account=0x7f080002;
+        public static final int action_logSync=0x7f080005;
         public static final int action_login=0x7f080001;
         public static final int action_sync=0x7f080003;
     }
@@ -36,9 +38,11 @@ public final class R {
         public static final int main=0x7f070000;
     }
     public static final class string {
+        public static final int action_cancelSync=0x7f040007;
         public static final int action_createFile=0x7f040001;
         public static final int action_displayConflict=0x7f040003;
         public static final int action_display_account=0x7f040005;
+        public static final int action_logSyncSettings=0x7f040008;
         public static final int action_login=0x7f040004;
         public static final int action_sync=0x7f040006;
         public static final int app_name=0x7f040000;
