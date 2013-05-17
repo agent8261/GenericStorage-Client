@@ -3,25 +3,24 @@ package edu.umich.imlc.test.api;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import edu.umich.imlc.mydesk.test.common.GenericContract;
-import edu.umich.imlc.mydesk.test.common.GenericContract.GenericURIs;
-import edu.umich.imlc.mydesk.test.common.GenericContract.MetaDataColumns;
-import edu.umich.imlc.mydesk.test.common.Utils;
-import edu.umich.imlc.mydesk.test.common.GenericContract.Exceptions;
-import edu.umich.imlc.mydesk.test.common.GenericContract.MetaData;
-import edu.umich.imlc.mydesk.test.common.GenericContract.MetaDataProjections;
-import edu.umich.imlc.mydesk.test.common.exceptions.MyDeskException;
+
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SyncInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import edu.umich.imlc.mydesk.test.common.GenericContract;
+import edu.umich.imlc.mydesk.test.common.GenericContract.Exceptions;
+import edu.umich.imlc.mydesk.test.common.GenericContract.GenericURIs;
+import edu.umich.imlc.mydesk.test.common.GenericContract.MetaData;
+import edu.umich.imlc.mydesk.test.common.GenericContract.MetaDataColumns;
+import edu.umich.imlc.mydesk.test.common.Utils;
+import edu.umich.imlc.mydesk.test.common.exceptions.MyDeskException;
 
 public class GenericStorageApi
 {
@@ -80,30 +79,12 @@ public class GenericStorageApi
     logSyncStatus(account);
   }
 
-  private boolean isSyncActive(Account account)
-  {
-    Utils.printMethodName(TAG);
-    boolean isactive = false;
-    for( SyncInfo si : ContentResolver.getCurrentSyncs() )
-    {
-      Log.d(TAG, "SyncInfo: (" + si.account.name + ", " + si.account.type
-          + "), " + si.authority);
-      if( si.account.equals(account)
-          && si.authority.equals(GenericContract.AUTHORITY) )
-      {
-        isactive = true;
-      }
-    }
-    return isactive;
-  }
-
   public void logSyncStatus(Account account)
   {
     Utils.printMethodName(TAG);
-    Log.d(TAG, "isSyncActive: " + isSyncActive(account));
     Log.d(
         TAG,
-        "isSyncActive2: "
+        "isSyncActive: "
             + ContentResolver.isSyncActive(account, GenericContract.AUTHORITY));
     Log.d(
         TAG,
@@ -257,7 +238,7 @@ public class GenericStorageApi
     String[] whereArgs = { fileId };
     Cursor c = mContext.getContentResolver().query(
         Uri.withAppendedPath(GenericURIs.URI_FILES, fileId),
-        MetaDataProjections.METADATA, MetaDataColumns.FILE_ID + "=?",
+        MetaDataColumns.METADATA_PROJ, MetaDataColumns.FILE_ID + "=?",
         whereArgs, null);
     try
     {
@@ -278,7 +259,7 @@ public class GenericStorageApi
     Utils.printMethodName(TAG);
     String[] selectionIn = { String.valueOf(localId) };
     Cursor c = mContext.getContentResolver().query(GenericURIs.URI_FILES,
-        MetaDataProjections.METADATA, MetaDataColumns.ID + "=?", selectionIn,
+        MetaDataColumns.METADATA_PROJ, MetaDataColumns.ID + "=?", selectionIn,
         null);
     try
     {
