@@ -11,28 +11,31 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 import edu.umich.imlc.mydesk.test.common.GenericContract.GenericURIs;
-import edu.umich.imlc.mydesk.test.common.Utils;
 import edu.umich.imlc.mydesk.test.common.GenericContract.MetaData;
 import edu.umich.imlc.mydesk.test.common.GenericContract.MetaDataColumns;
+import edu.umich.imlc.mydesk.test.common.Utils;
 import edu.umich.imlc.mydesk.test.common.exceptions.MyDeskException;
 import edu.umich.imlc.test.api.GenericStorageApi;
 import edu.umich.imlc.test.client.R;
-import android.os.Bundle;
 import android.accounts.Account;
 import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
-public class MainActivity extends ListActivity implements
+
+public class MainActivity extends FragmentActivity implements
     LoaderCallbacks<Cursor>
 {
   private static final int GENERIC_LOADER = 0;
@@ -40,10 +43,12 @@ public class MainActivity extends ListActivity implements
   static final String SAMPLE_TYPE = "sample";
   GenericStorageApi api;
   Random rand = new Random();
-  public static final String[] mFromColumns = { MetaDataColumns.NAME, MetaDataColumns.SEQUENCE };
-  public static final int[] mToFields = { android.R.id.text1, android.R.id.text2 };
-  public static final String[] loaderProjection = { MetaDataColumns.ID, MetaDataColumns.NAME,
+  public static final String[] mFromColumns = { MetaDataColumns.NAME,
       MetaDataColumns.SEQUENCE };
+  public static final int[] mToFields = { android.R.id.text1,
+      android.R.id.text2 };
+  public static final String[] loaderProjection = { MetaDataColumns.ID,
+      MetaDataColumns.NAME, MetaDataColumns.SEQUENCE };
   SimpleCursorAdapter mAdapter;
 
   @Override
@@ -51,16 +56,31 @@ public class MainActivity extends ListActivity implements
   {
     super.onCreate(savedInstanceState);
     Utils.printMethodName(TAG);
+    setContentView(R.layout.activity_main);
     mAdapter = new SimpleCursorAdapter(this,
         android.R.layout.two_line_list_item, null, mFromColumns, mToFields, 0);
-    getLoaderManager().initLoader(GENERIC_LOADER, null, this);
-    setListAdapter(mAdapter);
+    getSupportLoaderManager().initLoader(GENERIC_LOADER, null, this);
+    ListView lv = (ListView) findViewById(android.R.id.list);
+    lv.setEmptyView(findViewById(android.R.id.empty));   
+    lv.setOnItemClickListener(new OnItemClickListener()
+    {
+
+      @Override
+      public void onItemClick(AdapterView<?> arg0, View v, int position, long id)
+      {
+        Utils.printMethodName(TAG);
+        MetaData fileMetaData = api().getMetaData(id);
+        openAndPrint(fileMetaData);
+        updateFile(fileMetaData);
+      }
+    });
+    lv.setAdapter(mAdapter);
   }
 
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
-  {    
+  {
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.main, menu);
     return true;
@@ -75,8 +95,7 @@ public class MainActivity extends ListActivity implements
     File blahFile = null;
     try
     {
-      blahFile = createLocalFile(fileName,
-          fileName + " create, " + 0);
+      blahFile = createLocalFile(fileName, fileName + " create, " + 0);
     }
     catch( FileNotFoundException e )
     {
@@ -114,17 +133,17 @@ public class MainActivity extends ListActivity implements
     Utils.printMethodName(TAG);
     api().cancelSync();
   }
-  
+
   public void logSyncStatus(MenuItem item)
   {
     Utils.printMethodName(TAG);
     api().logSyncStatus(new Account(api().getCurrentAccount(), "com.google"));
   }
-  
+
   public void login(MenuItem item)
   {
     Utils.printMethodName(TAG);
-    //api().startLoginActivity();
+    // api().startLoginActivity();
     api().loginChooseAccount();
   }
 
@@ -139,12 +158,12 @@ public class MainActivity extends ListActivity implements
     AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
     aBuilder.setMessage(accountName).setTitle("Account Name").show();
   }
-  
+
   public void exit(MenuItem item)
   {
     finish();
   }
-  
+
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args)
   {
@@ -189,7 +208,7 @@ public class MainActivity extends ListActivity implements
           newLine = "\n";
         }
         AlertDialog.Builder aBuilder = new AlertDialog.Builder(this);
-        aBuilder.setMessage(result.toString()+metaData).show();
+        aBuilder.setMessage(result.toString() + metaData).show();
       }
       finally
       {
@@ -261,15 +280,6 @@ public class MainActivity extends ListActivity implements
   {
     Utils.printMethodName(TAG);
     mAdapter.changeCursor(null);
-  }
-
-  @Override
-  protected void onListItemClick(ListView l, View v, int position, long id)
-  {
-    Utils.printMethodName(TAG);
-    MetaData fileMetaData = api().getMetaData(id);
-    openAndPrint(fileMetaData);
-    updateFile(fileMetaData);
   }
 
   private GenericStorageApi api()

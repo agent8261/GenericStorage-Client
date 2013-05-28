@@ -249,8 +249,8 @@ public class GenericStorageApi
     finally
     {
       c.close();
-    }// getMetaData
-  }
+    }
+  }// getMetaData
 
   // ---------------------------------------------------------------------------
 
